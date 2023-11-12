@@ -77,6 +77,7 @@ public class CampView extends View {
             } else {
                 System.out.println("(E)dit Camp");
             }
+            System.out.println("View (A)ttendee List");
         }
         if (user.isStaff()) System.out.println("Change (V)isibility");
         if (canRegister()) {
@@ -120,6 +121,9 @@ public class CampView extends View {
         if (command.equalsIgnoreCase("v") && user.isStaff()) {
             camp.setVisible(!camp.isVisible());
             return null;
+        }
+        if (command.equalsIgnoreCase("a") && canEdit()) {
+            return new MemberView(camp, this);
         }
         if (command.equalsIgnoreCase("a") && canRegister()) {
             camp.addUser(new CampUser(user.getUserID()));

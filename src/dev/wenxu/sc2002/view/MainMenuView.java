@@ -67,6 +67,7 @@ public class MainMenuView extends View {
                 sc.nextLine();
                 if (id < 1 || id > camps.size()) {
                     error = "Invalid ID provided.";
+                    continue;
                 }
                 return new CampView(camps.get(id-1), user, this);
             } else if (command.equalsIgnoreCase("p")) {
