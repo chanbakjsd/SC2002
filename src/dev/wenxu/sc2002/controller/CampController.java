@@ -4,8 +4,10 @@ import dev.wenxu.sc2002.entity.Camp;
 import dev.wenxu.sc2002.entity.CommitteeMember;
 import dev.wenxu.sc2002.entity.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class CampController {
     private static final CampController instance = new CampController();
@@ -61,5 +63,19 @@ public class CampController {
                         u.isPresent() &&
                         (u.get() instanceof CommitteeMember)
                 );
+    }
+
+    /**
+     * Checks if the user is registered on any day within [startDate, endDate].
+     * @param userID The ID of the user to check.
+     * @param startDate The date to start checking at.
+     * @param endDate The date to stop checking at.
+     * @return True if the user is registered between startDate and endDate, false otherwise.
+     */
+    public boolean isRegisteredBetween(String userID, LocalDate startDate, LocalDate endDate) {
+         Stream<Camp> registeredCamps = camps.stream().
+                 filter(camp -> camp.findUser(userID).isPresent());
+         return registeredCamps.filter(camp -> camp.getInfo().getEndDate() != null && camp.getInfo().getStartDate() != null).
+                 anyMatch(camp -> startDate.isBefore(camp.getInfo().getEndDate()) && endDate.isAfter(camp.getInfo().getStartDate()));
     }
 }

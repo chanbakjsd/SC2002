@@ -4,6 +4,7 @@ import dev.wenxu.sc2002.controller.UserController;
 import dev.wenxu.sc2002.entity.*;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -32,15 +33,8 @@ public class CampView extends View {
             clearScreen();
             listProperties();
             System.out.println();
-            if (user.isStaff()) {
-                if (camp.isVisible()) {
-                    System.out.println("This camp is VISIBLE to students.");
-                } else {
-                    System.out.println("This camp is currently HIDDEN from students.");
-                }
-                System.out.println();
-            }
 
+            this.showExtraInfo();
             this.listOptions();
             String command = sc.nextLine();
 
@@ -52,6 +46,26 @@ public class CampView extends View {
             } catch (IllegalArgumentException e) {
                 error = e.getMessage();
             }
+        }
+    }
+
+    protected void showExtraInfo() {
+        if (!user.isStaff()) {
+            return;
+        }
+        if (camp.isVisible()) {
+            System.out.println("This camp is VISIBLE to students.");
+        } else {
+            System.out.println("This camp is currently HIDDEN from students.");
+        }
+        System.out.println();
+        List<Suggestion> suggestions = camp.getSuggestions();
+        if (!suggestions.isEmpty()) {
+            System.out.println("Suggestions available:");
+            for (int i = 0; i < suggestions.size(); i++) {
+                System.out.printf("(%d) Suggestion by %s\n", i+1, suggestions.get(i).getSuggesterID());
+            }
+            System.out.println();
         }
     }
 
@@ -80,21 +94,43 @@ public class CampView extends View {
             return originalView;
         }
         if (command.equalsIgnoreCase("e") && canEdit()) {
-            Suggestion suggestion = currentSuggestion().orElse(new Suggestion(user.getUserID(), camp.getInfo()));
-            return new CampEditView(camp, user, originalView, suggestion);
+            return new CampEditView(camp, user, originalView);
         }
         if (command.equalsIgnoreCase("d") && currentSuggestion().isPresent()) {
             camp.deleteSuggestion(currentSuggestion().get());
+            return null;
         }
         if (command.equalsIgnoreCase("v") && user.isStaff()) {
             camp.setVisible(!camp.isVisible());
-        } else if (command.equalsIgnoreCase("a") && canRegister()) {
+            return null;
+        }
+        if (command.equalsIgnoreCase("a") && canRegister()) {
             camp.addUser(new CampUser(user.getUserID()));
-        } else if (command.equalsIgnoreCase("m") && canRegister()) {
+            return null;
+        }
+        if (command.equalsIgnoreCase("m") && canRegister()) {
             camp.addUser(new CommitteeMember(user.getUserID()));
-        } else if (command.equalsIgnoreCase("l") && isAttendee()) {
+            return null;
+        }
+        if (command.equalsIgnoreCase("l") && isAttendee()) {
             camp.withdraw(user.getUserID());
-        } else {
+            return null;
+        }
+
+        if (!user.isStaff()) {
+            return null;
+        }
+
+        // Handle viewing suggestions.
+        try {
+            int id = Integer.parseInt(command);
+            id--;
+            if (id < 0 || id > camp.getSuggestions().size()) {
+                error = "Invalid option. Please try again.";
+                return null;
+            }
+            return new CampSuggestionView(camp, user, originalView, camp.getSuggestions().get(id));
+        } catch (NumberFormatException e) {
             error = "Invalid option. Please try again.";
         }
         return null;

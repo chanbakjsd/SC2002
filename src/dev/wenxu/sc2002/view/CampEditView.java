@@ -13,9 +13,9 @@ import java.util.Scanner;
 public class CampEditView extends CampView {
     private static final DateTimeFormatter DATE_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final Suggestion suggestion;
-    public CampEditView(Camp camp, User user, View originalView, Suggestion suggestion) {
+    public CampEditView(Camp camp, User user, View originalView) {
         super(camp, user, originalView);
-        this.suggestion = suggestion;
+        this.suggestion = new Suggestion(user.getUserID(), camp.getInfo());
     }
 
     @Override

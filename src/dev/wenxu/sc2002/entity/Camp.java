@@ -2,6 +2,7 @@ package dev.wenxu.sc2002.entity;
 
 import dev.wenxu.sc2002.controller.CampController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,11 @@ public class Camp {
         }
         if (user instanceof CommitteeMember && CampController.getInstance().isCommitteeMember(user.getUserID())) {
             throw new IllegalArgumentException("User already committee member for another camp.");
+        }
+        LocalDate startDate = this.info.getStartDate();
+        LocalDate endDate = this.info.getEndDate();
+        if (startDate != null && endDate != null && CampController.getInstance().isRegisteredBetween(user.getUserID(), startDate, endDate)) {
+            throw new IllegalArgumentException("User already registered to another camp during the period of this camp.");
         }
         this.attendees.add(user);
     }

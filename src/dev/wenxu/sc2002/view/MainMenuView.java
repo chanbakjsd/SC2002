@@ -110,9 +110,17 @@ public class MainMenuView extends View {
             int suggestionCount = camp.getSuggestions().size();
             if (suggestionCount > 0 && user.isStaff()) {
                 if (suggestionCount == 1) {
-                    System.out.print("- 1 suggestion available");
+                    System.out.print(" - 1 suggestion available");
                 } else {
                     System.out.printf(" - %d suggestion available", suggestionCount);
+                }
+            }
+            if (!user.isStaff()) {
+                Optional<CampUser> campUser = camp.findUser(user.getUserID());
+                if (campUser.isPresent() && campUser.get() instanceof CommitteeMember) {
+                    System.out.print(" **COMMITTEE MEMBER**");
+                } else if (campUser.isPresent()) {
+                    System.out.print(" **ATTENDEE**");
                 }
             }
             System.out.println();
