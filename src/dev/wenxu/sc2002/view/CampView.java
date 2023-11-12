@@ -83,6 +83,23 @@ public class CampView extends View {
             System.out.println("Register as (A)ttendee");
             System.out.println("Register as Committee (M)ember");
         }
+        if (canEdit()) {
+            long unresolvedCount = camp.getEnquiries().stream().
+                    filter(e -> e.getAnswer() == null).
+                    count();
+            if (unresolvedCount > 0) {
+                System.out.printf("View Unanswered E(n)quiries - %d unanswered\n", unresolvedCount);
+            }
+        } else {
+            Optional<Enquiry> enquiry = camp.findEnquiry(user.getUserID());
+            if (enquiry.isEmpty()) {
+                System.out.println("Create an E(n)quiry");
+            } else if (enquiry.get().getAnswer() == null) {
+                System.out.println("View your E(n)quiry - Pending Answer");
+            } else {
+                System.out.println("View your E(n)quiry - Answer Available");
+            }
+        }
         if (isAttendee()) {
             System.out.println("(L)eave Camp");
         }
@@ -94,7 +111,7 @@ public class CampView extends View {
             return originalView;
         }
         if (command.equalsIgnoreCase("e") && canEdit()) {
-            return new CampEditView(camp, user, originalView);
+            return new CampEditView(camp, user, this);
         }
         if (command.equalsIgnoreCase("d") && currentSuggestion().isPresent()) {
             camp.deleteSuggestion(currentSuggestion().get());
@@ -112,6 +129,12 @@ public class CampView extends View {
             camp.addUser(new CommitteeMember(user.getUserID()));
             return null;
         }
+        if (command.equalsIgnoreCase("n") && canEdit()) {
+            return new EnquiryAnswerView(camp, user, this);
+        }
+        if (command.equalsIgnoreCase("n") && !canEdit()) {
+            return new EnquiryView(camp, user, this);
+        }
         if (command.equalsIgnoreCase("l") && isAttendee()) {
             camp.withdraw(user.getUserID());
             return null;
@@ -126,14 +149,12 @@ public class CampView extends View {
             int id = Integer.parseInt(command);
             id--;
             if (id < 0 || id > camp.getSuggestions().size()) {
-                error = "Invalid option. Please try again.";
-                return null;
+                throw new IllegalArgumentException("Invalid option. Please try again.");
             }
-            return new CampSuggestionView(camp, user, originalView, camp.getSuggestions().get(id));
+            return new SuggestionView(camp, user, this, camp.getSuggestions().get(id));
         } catch (NumberFormatException e) {
-            error = "Invalid option. Please try again.";
+            throw new IllegalArgumentException("Invalid option. Please try again.");
         }
-        return null;
     }
 
     private boolean canEdit() {

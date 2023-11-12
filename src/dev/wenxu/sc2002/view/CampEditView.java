@@ -43,10 +43,10 @@ public class CampEditView extends CampView {
                     member.incrementPoint();
                 }
             }
-            return new CampView(camp, user, originalView);
+            return originalView;
         }
         if (command.equalsIgnoreCase("q"))
-            return new CampView(camp, user, originalView);
+            return originalView;
         try {
             int option = Integer.parseInt(command);
             switch (option) {

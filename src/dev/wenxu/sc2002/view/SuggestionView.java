@@ -4,10 +4,10 @@ import dev.wenxu.sc2002.entity.*;
 
 import java.util.Scanner;
 
-public class CampSuggestionView extends CampView {
+public class SuggestionView extends CampView {
     private final Suggestion suggestion;
 
-    public CampSuggestionView(Camp camp, User user, View originalView, Suggestion suggestion) {
+    public SuggestionView(Camp camp, User user, View originalView, Suggestion suggestion) {
         super(camp, user, originalView);
         this.suggestion = suggestion;
     }
@@ -33,14 +33,14 @@ public class CampSuggestionView extends CampView {
             camp.findUser(suggestion.getSuggesterID())
                     .map(user -> (CommitteeMember)user)
                     .ifPresent(CommitteeMember::incrementPoint);
-            return new CampView(camp, user, originalView);
+            return originalView;
         }
         if (command.equalsIgnoreCase("r")) {
             camp.deleteSuggestion(suggestion);
-            return new CampView(camp, user, originalView);
+            return originalView;
         }
         if (command.equalsIgnoreCase("q")) {
-            return new CampView(camp, user, originalView);
+            return originalView;
         }
         return null;
     }

@@ -26,6 +26,10 @@ public class Camp {
      */
     private final List<String> withdrawnAttendees;
     /**
+     * The list of enquiries raised by users.
+     */
+    private final List<Enquiry> enquiries;
+    /**
      * The list of suggestions raised by committee members.
      */
     private final List<Suggestion> suggestions;
@@ -37,6 +41,7 @@ public class Camp {
         this.info = info;
         this.attendees = new ArrayList<>();
         this.withdrawnAttendees = new ArrayList<>();
+        this.enquiries = new ArrayList<>();
         this.suggestions = new ArrayList<>();
     }
 
@@ -149,5 +154,21 @@ public class Camp {
      */
     public void deleteSuggestion(Suggestion suggestion) {
         this.suggestions.remove(suggestion);
+    }
+
+    public List<Enquiry> getEnquiries() {
+        return this.enquiries;
+    }
+    public Optional<Enquiry> findEnquiry(String userID) {
+        return this.enquiries.stream().
+                filter(enquiry -> enquiry.getAskerID().equalsIgnoreCase(userID)).
+                findFirst();
+    }
+    public void addEnquiry(Enquiry e) {
+        this.enquiries.removeIf(enquiry -> enquiry.getAskerID().equalsIgnoreCase(e.getAskerID()));
+        this.enquiries.add(e);
+    }
+    public void removeEnquiry(Enquiry e) {
+        this.enquiries.remove(e);
     }
 }
