@@ -51,7 +51,7 @@ public class CampInfo {
     /**
      * The user ID of the staff that created this camp entry.
      */
-    public String staffInCharge;
+    private String staffInCharge;
 
     /**
      * @param name The name of the camp.

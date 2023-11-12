@@ -67,10 +67,8 @@ public class MainMenuView extends View {
                 sc.nextLine();
                 if (id < 1 || id > camps.size()) {
                     error = "Invalid ID provided.";
-                } else {
-                    CampView view = new CampView(camps.get(id-1), user, this);
-                    view.display(sc);
                 }
+                return new CampView(camps.get(id-1), user, this);
             } else if (command.equalsIgnoreCase("p")) {
                 return new PasswordChangeView(user, false);
             } else if (command.equalsIgnoreCase("q")) {
@@ -108,8 +106,16 @@ public class MainMenuView extends View {
             }
             System.out.printf("(%d) ", i+1);
             System.out.print(camp.getInfo().getName());
-            System.out.printf(" (%d/%d)\n", camp.getAttendees().size(), camp.getInfo().getTotalSlots());
+            System.out.printf(" (%d/%d)", camp.getAttendees().size(), camp.getInfo().getTotalSlots());
+            int suggestionCount = camp.getSuggestions().size();
+            if (suggestionCount > 0 && user.isStaff()) {
+                if (suggestionCount == 1) {
+                    System.out.print("- 1 suggestion available");
+                } else {
+                    System.out.printf(" - %d suggestion available", suggestionCount);
+                }
+            }
+            System.out.println();
         }
     }
-
 }

@@ -1,6 +1,8 @@
 package dev.wenxu.sc2002.controller;
 
 import dev.wenxu.sc2002.entity.Camp;
+import dev.wenxu.sc2002.entity.CommitteeMember;
+import dev.wenxu.sc2002.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +48,18 @@ public class CampController {
      */
     public void deleteCamp(Camp camp) {
         camps.remove(camp);
+    }
+
+    /**
+     * Returns whether the user is an existing committee member.
+     * @param userID The ID of the user to check.
+     * @return True if the user is an existing committee member, false otherwise.
+     */
+    public boolean isCommitteeMember(String userID) {
+        return camps.stream().map(camp -> camp.findUser(userID)).
+                anyMatch(u ->
+                        u.isPresent() &&
+                        (u.get() instanceof CommitteeMember)
+                );
     }
 }

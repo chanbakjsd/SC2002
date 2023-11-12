@@ -1,37 +1,25 @@
 package dev.wenxu.sc2002.view;
 
 import dev.wenxu.sc2002.controller.UserController;
-import dev.wenxu.sc2002.entity.Camp;
-import dev.wenxu.sc2002.entity.CampInfo;
-import dev.wenxu.sc2002.entity.CommitteeMember;
-import dev.wenxu.sc2002.entity.User;
+import dev.wenxu.sc2002.entity.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
 
 public class CampView extends View {
-    private static final DateTimeFormatter DATE_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    /**
-     * True if the camp is in editor view, false otherwise.
-     */
-    private boolean editMode;
     /**
      * The camp that is being viewed/edited.
      */
-    private final Camp camp;
+    protected final Camp camp;
     /**
      * The user that is viewing/editing the camp.
      */
-    private final User user;
+    protected final User user;
     /**
      * The view to return to after CampView has been exited.
      */
-    private final View originalView;
+    protected final View originalView;
 
     public CampView(Camp camp, User user, View originalView) {
         this.camp = camp;
@@ -52,30 +40,95 @@ public class CampView extends View {
                 }
                 System.out.println();
             }
-            boolean canEdit = user.isStaff() || UserController.isManagedCamp(camp, user);
-            if (user.isStaff()) System.out.println("(C)hange Visibility");
-            if (canEdit) System.out.println("Toggle (E)dit Mode");
-            System.out.println("(Q)uit");
+
+            this.listOptions();
             String command = sc.nextLine();
-            if (command.equalsIgnoreCase("c") && user.isStaff()) {
-                camp.setVisible(!camp.isVisible());
-            } else if (command.equalsIgnoreCase("e") && canEdit) {
-                editMode = !editMode;
-            } else if (command.equalsIgnoreCase("q")) {
-                return originalView;
-            } else if (editMode) {
-                editItem(sc, command);
-            } else {
-                error = "Invalid option. Please try again.";
+
+            try {
+                View newView = handleCommand(sc, command);
+                if (newView != null) {
+                    return newView;
+                }
+            } catch (IllegalArgumentException e) {
+                error = e.getMessage();
             }
         }
+    }
+
+    protected void listOptions() {
+        if (canEdit()) {
+            if (currentSuggestion().isPresent()) {
+                System.out.println("(E)dit Suggestion");
+                System.out.println("(D)elete Suggestion");
+            } else {
+                System.out.println("(E)dit Camp");
+            }
+        }
+        if (user.isStaff()) System.out.println("Change (V)isibility");
+        if (canRegister()) {
+            System.out.println("Register as (A)ttendee");
+            System.out.println("Register as Committee (M)ember");
+        }
+        if (isAttendee()) {
+            System.out.println("(L)eave Camp");
+        }
+        System.out.println("(Q)uit");
+    }
+
+    protected View handleCommand(Scanner sc, String command) {
+        if (command.equalsIgnoreCase("q")) {
+            return originalView;
+        }
+        if (command.equalsIgnoreCase("e") && canEdit()) {
+            Suggestion suggestion = currentSuggestion().orElse(new Suggestion(user.getUserID(), camp.getInfo()));
+            return new CampEditView(camp, user, originalView, suggestion);
+        }
+        if (command.equalsIgnoreCase("d") && currentSuggestion().isPresent()) {
+            camp.deleteSuggestion(currentSuggestion().get());
+        }
+        if (command.equalsIgnoreCase("v") && user.isStaff()) {
+            camp.setVisible(!camp.isVisible());
+        } else if (command.equalsIgnoreCase("a") && canRegister()) {
+            camp.addUser(new CampUser(user.getUserID()));
+        } else if (command.equalsIgnoreCase("m") && canRegister()) {
+            camp.addUser(new CommitteeMember(user.getUserID()));
+        } else if (command.equalsIgnoreCase("l") && isAttendee()) {
+            camp.withdraw(user.getUserID());
+        } else {
+            error = "Invalid option. Please try again.";
+        }
+        return null;
+    }
+
+    private boolean canEdit() {
+        return user.isStaff() || UserController.isManagedCamp(camp, user);
+    }
+
+    private boolean canRegister() {
+        Optional<CampUser> campUser = camp.findUser(user.getUserID());
+        return !user.isStaff() && campUser.isEmpty();
+    }
+
+    private boolean isAttendee() {
+        Optional<CampUser> campUser = camp.findUser(user.getUserID());
+        return campUser.isPresent() && !(campUser.get() instanceof CommitteeMember);
+    }
+
+    private Optional<Suggestion> currentSuggestion() {
+        return camp.getSuggestions().stream().
+                filter(suggestion -> suggestion.getSuggesterID().equals(user.getUserID())).
+                findFirst();
+    }
+
+    protected CampInfo getCampInfo() {
+        return camp.getInfo();
     }
 
     /**
      * Lists all the properties of the camp.
      */
     private void listProperties() {
-        CampInfo info = camp.getInfo();
+        CampInfo info = getCampInfo();
         showProperty(1, "Name", info.getName());
         if (info.getStartDate() == null || info.getEndDate() == null) {
             showProperty(2, "Date", "Unknown");
@@ -106,85 +159,8 @@ public class CampView extends View {
         System.out.println();
     }
 
-    private void editItem(Scanner sc, String optionStr) {
-        CampInfo info = camp.getInfo();
-        try {
-            int option = Integer.parseInt(optionStr);
-            switch (option) {
-                default:
-                    error = "Invalid option. Please try again.";
-                    break;
-                case 1:
-                    System.out.print("Please enter the new name for the camp: ");
-                    info.setName(sc.nextLine());
-                    break;
-                case 2:
-                    System.out.print("Please enter the start date (YYYY-MM-DD): ");
-                    LocalDate startDate = LocalDate.parse(sc.nextLine());
-                    System.out.print("Please enter the end date (YYYY-MM-DD): ");
-                    LocalDate endDate = LocalDate.parse(sc.nextLine());
-                    if (startDate.isAfter(endDate)) {
-                        error = "End date cannot be before start date.";
-                        return;
-                    }
-                    info.setStartDate(startDate);
-                    info.setEndDate(endDate);
-                    break;
-                case 3:
-                    System.out.print("Please enter the registration deadline (YYYY-MM-DD hh:mm:ss): ");
-                    LocalDateTime deadline = LocalDateTime.parse(sc.nextLine(), DATE_TIME_PATTERN);
-                    info.setRegistrationDeadline(deadline);
-                    break;
-                case 4:
-                    System.out.print("Please enter the faculty the camp should be open to (or 'NTU' if open-to-all): ");
-                    String faculty = sc.nextLine();
-                    if (faculty.equalsIgnoreCase("NTU")) {
-                        info.setOpenToAll(true);
-                    } else {
-                        info.setOpenToAll(false);
-                        info.setFaculty(faculty);
-                    }
-                    break;
-                case 5:
-                    System.out.print("Please enter the location of the camp: ");
-                    info.setLocation(sc.nextLine());
-                    break;
-                case 6:
-                    System.out.print("Please enter the number of slots in the camp: ");
-                    info.setTotalSlots(sc.nextInt());
-                    break;
-                case 7:
-                    System.out.print("Please enter the number of committee members in the camp: ");
-                    info.setCampCommitteeSlots(sc.nextInt());
-                    break;
-                case 8:
-                    System.out.print("Please enter the name of the staff that will be in charge: ");
-                    String staffID = sc.nextLine();
-                    Optional<User> staff = UserController.getInstance().getUser(staffID);
-                    boolean isValidStaff = staff.map(User::isStaff).orElse(false);
-                    if (isValidStaff) {
-                        info.setStaffInCharge(staff.get().getUserID());
-                    } else {
-                        error = "Invalid staff ID provided.";
-                    }
-                    break;
-                case 9:
-                    System.out.println("Please enter the description of the camp:");
-                    info.setDescription(sc.nextLine());
-                    break;
-            }
-        } catch (NumberFormatException e) {
-            error = "Invalid option. Please try again.";
-        } catch (IllegalArgumentException e) {
-            error = e.getMessage();
-        } catch (DateTimeParseException e) {
-            error = "Invalid format entered.";
-        }
-    }
-
-    private void showProperty(int id, String key, String value) {
-        if (editMode) System.out.printf("(%d) ", id);
-        if (value == null) value = "Unknown";
-        System.out.printf("%25s %s\n", key+":", value);
+    protected void showProperty(int id, String key, String value) {
+        String displayValue = ((value == null) || value.isEmpty()) ? "Unknown" : value;
+        System.out.printf("%25s %s\n", key+":", displayValue);
     }
 }

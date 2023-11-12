@@ -1,5 +1,7 @@
 package dev.wenxu.sc2002.entity;
 
+import dev.wenxu.sc2002.controller.CampController;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,10 @@ public class Camp {
      * The user IDs of attendees that have withdrawn.
      */
     private final List<String> withdrawnAttendees;
+    /**
+     * The list of suggestions raised by committee members.
+     */
+    private final List<Suggestion> suggestions;
 
     /**
      * @param info The information of the camp.
@@ -30,6 +36,7 @@ public class Camp {
         this.info = info;
         this.attendees = new ArrayList<>();
         this.withdrawnAttendees = new ArrayList<>();
+        this.suggestions = new ArrayList<>();
     }
 
     /**
@@ -37,6 +44,17 @@ public class Camp {
      */
     public CampInfo getInfo() {
         return info;
+    }
+
+    /**
+     * Finds the user that is attending the camp.
+     * @param id The ID of the user to search for.
+     * @return The camp user, if the user is registered.
+     */
+    public Optional<CampUser> findUser(String id) {
+        return this.getAttendees().stream().
+                filter(u -> u.getUserID().equals(id)).
+                findFirst();
     }
 
     /**
@@ -60,6 +78,9 @@ public class Camp {
         }
         if (this.info.getRegistrationDeadline() == null || LocalDateTime.now().isAfter(this.info.getRegistrationDeadline())) {
             throw new IllegalArgumentException("The camp registration deadline is over.");
+        }
+        if (user instanceof CommitteeMember && CampController.getInstance().isCommitteeMember(user.getUserID())) {
+            throw new IllegalArgumentException("User already committee member for another camp.");
         }
         this.attendees.add(user);
     }
@@ -98,6 +119,29 @@ public class Camp {
      * @param visible The camp will be viewable to students if this is set to true.
      */
     public void setVisible(boolean visible) {
+        if (this.info.getRegistrationDeadline() == null) {
+            throw new IllegalArgumentException("The registration deadline must be set to allow students to register.");
+        }
         this.visible = visible;
+    }
+
+    public List<Suggestion> getSuggestions() {
+        return this.suggestions;
+    }
+
+    /**
+     * Propose changes for the camp by a committee member.
+     * @param suggestion The suggestion to add.
+     */
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
+    }
+
+    /**
+     * Delete proposed changes for the camp by a committee member.
+     * @param suggestion The suggestion to delete.
+     */
+    public void deleteSuggestion(Suggestion suggestion) {
+        this.suggestions.remove(suggestion);
     }
 }

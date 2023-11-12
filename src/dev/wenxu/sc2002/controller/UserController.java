@@ -109,7 +109,7 @@ public class UserController {
         CampInfo info = camp.getInfo();
         String userID = user.getUserID();
         if (user.isStaff())
-            return info.staffInCharge.equals(userID);
+            return info.getStaffInCharge().equals(userID);
         Optional<CampUser> attendee = camp.getAttendees().stream().
                 filter(u -> u.getUserID().equals(userID)).
                 findFirst();
