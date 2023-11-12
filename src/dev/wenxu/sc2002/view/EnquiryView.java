@@ -56,7 +56,7 @@ public class EnquiryView extends View {
                     continue;
                 }
                 if (command.equalsIgnoreCase("d")) {
-                    camp.removeEnquiry(enquiry);
+                    camp.deleteEnquiry(enquiry);
                     return originalView;
                 }
             } else if (command.equalsIgnoreCase("a")) {

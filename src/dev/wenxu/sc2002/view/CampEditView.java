@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -15,7 +16,7 @@ public class CampEditView extends CampView {
     private final Suggestion suggestion;
     public CampEditView(Camp camp, User user, View originalView) {
         super(camp, user, originalView);
-        this.suggestion = new Suggestion(user.getUserID(), camp.getInfo());
+        this.suggestion = camp.findSuggestion(user.getUserID()).orElse(new Suggestion(user.getUserID(), camp.getInfo()));
     }
 
     @Override
@@ -24,6 +25,7 @@ public class CampEditView extends CampView {
             System.out.println("(S)ave Changes");
         } else {
             System.out.println("(S)ave Suggestion");
+            System.out.println("(D)elete Suggestion");
         }
         System.out.println("(Q)uit without Saving");
     }
@@ -34,7 +36,7 @@ public class CampEditView extends CampView {
             if (user.isStaff()) {
                 suggestion.applyTo(camp.getInfo());
             } else {
-                camp.addSuggestion(suggestion);
+                camp.upsertSuggestion(suggestion);
                 Optional<CampUser> campUser = camp.findUser(user.getUserID());
                 if (campUser.isEmpty()) {
                     error = "Internal server error - Cannot find committee member.";
@@ -43,6 +45,10 @@ public class CampEditView extends CampView {
                     member.incrementPoint();
                 }
             }
+            return originalView;
+        }
+        if (command.equalsIgnoreCase("d")) {
+            camp.deleteSuggestion(suggestion);
             return originalView;
         }
         if (command.equalsIgnoreCase("q"))
@@ -117,6 +123,8 @@ public class CampEditView extends CampView {
             error = "Invalid option. Please try again.";
         } catch (IllegalArgumentException e) {
             error = e.getMessage();
+        } catch (InputMismatchException e) {
+            error = "Invalid value entered.";
         } catch (DateTimeParseException e) {
             error = "Invalid format entered.";
         }

@@ -140,11 +140,17 @@ public class Camp {
         return this.suggestions;
     }
 
+    public Optional<Suggestion> findSuggestion(String userID) {
+        return this.suggestions.stream().
+                filter(suggestion -> suggestion.getSuggesterID().equalsIgnoreCase(userID)).
+                findFirst();
+    }
     /**
      * Propose changes for the camp by a committee member.
      * @param suggestion The suggestion to add.
      */
-    public void addSuggestion(Suggestion suggestion) {
+    public void upsertSuggestion(Suggestion suggestion) {
+        this.suggestions.removeIf(s -> s.getSuggesterID().equalsIgnoreCase(suggestion.getSuggesterID()));
         this.suggestions.add(suggestion);
     }
 
@@ -168,7 +174,7 @@ public class Camp {
         this.enquiries.removeIf(enquiry -> enquiry.getAskerID().equalsIgnoreCase(e.getAskerID()));
         this.enquiries.add(e);
     }
-    public void removeEnquiry(Enquiry e) {
+    public void deleteEnquiry(Enquiry e) {
         this.enquiries.remove(e);
     }
 }
