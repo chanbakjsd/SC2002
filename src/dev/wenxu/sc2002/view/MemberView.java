@@ -8,7 +8,6 @@ import dev.wenxu.sc2002.entity.User;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class MemberView extends View {
     /**

@@ -4,7 +4,6 @@ import dev.wenxu.sc2002.entity.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,7 @@ public class UserController {
     };
 
     /**
-     * The list of the users that can login to the system.
+     * The list of the users that can log in to the system.
      */
     private final List<User> users;
 
@@ -61,13 +60,6 @@ public class UserController {
                 return;
             }
         }
-    }
-
-    /**
-     * @return Number of users initialized in the system.
-     */
-    public int getUserCount() {
-        return users.size();
     }
 
     /**

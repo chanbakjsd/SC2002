@@ -2,7 +2,6 @@ package dev.wenxu.sc2002.controller;
 
 import dev.wenxu.sc2002.entity.Camp;
 import dev.wenxu.sc2002.entity.CommitteeMember;
-import dev.wenxu.sc2002.entity.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,14 +41,6 @@ public class CampController {
      */
     public void addCamp(Camp camp) {
         camps.add(camp);
-    }
-
-    /**
-     * Remove the camp if it is found.
-     * @param camp The camp to delete.
-     */
-    public void deleteCamp(Camp camp) {
-        camps.remove(camp);
     }
 
     /**
