@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public abstract class View {
     protected String error;
+    protected String info;
 
     /**
      * clearScreen clears supported terminals and displays the error message.
@@ -13,9 +14,15 @@ public abstract class View {
         System.out.println("\u001b[2J\u001b[H");
         if (error != null) {
             System.out.println("ERROR: " + error);
+        }
+        if (info != null) {
+            System.out.println("INFO: " + info);
+        }
+        if (error != null || info != null) {
             System.out.println();
         }
         error = null;
+        info = null;
     }
 
     /**

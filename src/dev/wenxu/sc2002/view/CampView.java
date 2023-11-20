@@ -91,6 +91,7 @@ public class CampView extends View {
             if (unresolvedCount > 0) {
                 System.out.printf("View Unanswered E(n)quiries - %d unanswered\n", unresolvedCount);
             }
+            System.out.println("(G)enerate Report");
         } else {
             Optional<Enquiry> enquiry = camp.findEnquiry(user.getUserID());
             if (enquiry.isEmpty()) {
@@ -142,6 +143,9 @@ public class CampView extends View {
         if (command.equalsIgnoreCase("l") && isAttendee()) {
             camp.withdraw(user.getUserID());
             return null;
+        }
+        if (command.equalsIgnoreCase("g") && canEdit()) {
+            return new ReportView(camp, this, user.isStaff());
         }
 
         if (!user.isStaff()) {
