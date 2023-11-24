@@ -9,7 +9,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The entrypoint of the CAM system.
+ */
 public class CAMMain {
+    /**
+     * The entry point of the CAM system. It invokes the initialization functions and loads the LoginView.
+     * @param args Arguments passed in. They are ignored
+     */
     public static void main(String[] args) {
         initializeUsers();
         Scanner sc = new Scanner(System.in);

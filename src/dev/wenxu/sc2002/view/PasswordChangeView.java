@@ -4,6 +4,9 @@ import dev.wenxu.sc2002.entity.User;
 
 import java.util.Scanner;
 
+/**
+ * The screen to change a user's password.
+ */
 public class PasswordChangeView extends View {
     /**
      * The user to change the password for.
@@ -16,12 +19,20 @@ public class PasswordChangeView extends View {
     private final boolean forced;
 
     /**
+     * Create a new PasswordChangeView.
      * @param user The user to change password for.
+     * @param forced True if the user must change password before leaving this view, false otherwise.
      */
     public PasswordChangeView(User user, boolean forced) {
         this.user = user;
         this.forced = forced;
     }
+
+    /**
+     * Display the screen to change password.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to return to.
+     */
     @Override
     public View display(Scanner sc) {
         clearScreen();

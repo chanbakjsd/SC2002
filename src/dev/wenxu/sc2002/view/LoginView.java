@@ -5,7 +5,15 @@ import dev.wenxu.sc2002.entity.User;
 
 import java.util.Scanner;
 
+/**
+ * A screen for the users to login.
+ */
 public class LoginView extends View {
+    /**
+     * Show the login screen of the user.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to switch to, typically the MainMenuView.
+     */
     @Override
     public View display(Scanner sc) {
         UserController uc = UserController.getInstance();

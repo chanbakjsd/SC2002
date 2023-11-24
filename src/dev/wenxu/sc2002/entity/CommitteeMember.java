@@ -1,5 +1,8 @@
 package dev.wenxu.sc2002.entity;
 
+/**
+ * A committee member that is helping out in a camp.
+ */
 public class CommitteeMember extends CampUser {
     /**
      * The number of points the committee member has. 1 point is given every time the committee member answers an enquiry.

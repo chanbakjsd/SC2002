@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A camp that is being managed by the CAM system.
+ */
 public class Camp {
     /**
      * True if the camp is visible to the potential attendees, false otherwise.
@@ -136,10 +139,18 @@ public class Camp {
         this.visible = visible;
     }
 
+    /**
+     * @return The list of suggestions associated with the Camp.
+     */
     public List<Suggestion> getSuggestions() {
         return this.suggestions;
     }
 
+    /**
+     * Search for the suggestion of a specific committee member.
+     * @param userID The ID of the user to look for.
+     * @return The suggestion of the user, if it exists.
+     */
     public Optional<Suggestion> findSuggestion(String userID) {
         return this.suggestions.stream().
                 filter(suggestion -> suggestion.getSuggesterID().equalsIgnoreCase(userID)).
@@ -162,18 +173,37 @@ public class Camp {
         this.suggestions.remove(suggestion);
     }
 
+    /**
+     * @return The list of all enquiries by users.
+     */
     public List<Enquiry> getEnquiries() {
         return this.enquiries;
     }
+
+    /**
+     * Search for the enquiry of a specific user.
+     * @param userID The ID of the user to look for.
+     * @return The enquiry of the user, if available.
+     */
     public Optional<Enquiry> findEnquiry(String userID) {
         return this.enquiries.stream().
                 filter(enquiry -> enquiry.getAskerID().equalsIgnoreCase(userID)).
                 findFirst();
     }
+
+    /**
+     * Create a new enquiry. If an enquiry exists for the user, it will replace the enquiry instead.
+     * @param e The enquiry to create.
+     */
     public void addEnquiry(Enquiry e) {
         this.enquiries.removeIf(enquiry -> enquiry.getAskerID().equalsIgnoreCase(e.getAskerID()));
         this.enquiries.add(e);
     }
+
+    /**
+     * Deletes an enquiry.
+     * @param e The enquiry to delete.
+     */
     public void deleteEnquiry(Enquiry e) {
         this.enquiries.remove(e);
     }

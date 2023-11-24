@@ -8,9 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The controller that contains and manipulates the list of users that have access to CAM.
+ */
 public class UserController {
+    /**
+     * The instance of the user controller to use.
+     */
     private static final UserController instance = new UserController();
 
+    /**
+     * The list of suffixes that a user may have. It is ignored when parsing the user's ID.
+     */
     private static final String[] SUFFIXES = {
         // Email suffixes.
         "@E.NTU.EDU.SG", "@NTU.EDU.SG",

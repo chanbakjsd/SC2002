@@ -8,7 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * The controller that contains and manipulates the list of camps managed by CAM.
+ */
 public class CampController {
+    /**
+     * The instance of the camp controller to use.
+     */
     private static final CampController instance = new CampController();
 
     /**
@@ -21,6 +27,7 @@ public class CampController {
     }
 
     /**
+     * Returns the instance of CampController to use.
      * @return The instance of CampController.
      */
     public static CampController getInstance() {
@@ -29,6 +36,7 @@ public class CampController {
 
 
     /**
+     * Returns the list of camps available.
      * @return The list of camps being managed by CampController.
      */
     public List<Camp> getCamps() {

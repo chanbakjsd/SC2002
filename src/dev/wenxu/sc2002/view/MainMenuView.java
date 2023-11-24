@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * A screen for the user to choose their camps and log out.
+ */
 public class MainMenuView extends View {
     /**
      * The user that is currently logged in.
@@ -15,6 +18,7 @@ public class MainMenuView extends View {
     private final User user;
 
     /**
+     * Create a new MainMenuView.
      * @param user The user that is currently logged in.
      */
     public MainMenuView(User user) {
@@ -22,6 +26,7 @@ public class MainMenuView extends View {
     }
 
     /**
+     * Create a new MainMenuView with an error.
      * @param user The user that is currently logged in.
      * @param error The error string to display to the user.
      */
@@ -31,6 +36,7 @@ public class MainMenuView extends View {
     }
 
     /**
+     * Display a menu that allow the user to create and view camps.
      * @param sc The scanner that is scanning for inputs from stdin.
      * @return The LoginView to return back to the login screen.
      */

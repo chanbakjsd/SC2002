@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * The central screen for a user to interact with a camp.
+ */
 public class CampView extends View {
     /**
      * The camp that is being viewed/edited.
@@ -22,12 +25,23 @@ public class CampView extends View {
      */
     protected final View originalView;
 
+    /**
+     * Creates a new CampView.
+     * @param camp The camp to view
+     * @param user The user that is authenticated
+     * @param originalView The view to return to after exit
+     */
     public CampView(Camp camp, User user, View originalView) {
         this.camp = camp;
         this.user = user;
         this.originalView = originalView;
     }
 
+    /**
+     * Display the CampView.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to return to.
+     */
     public View display(Scanner sc) {
         while (true) {
             clearScreen();
@@ -49,6 +63,9 @@ public class CampView extends View {
         }
     }
 
+    /**
+     * Show extra information of the camp to be shown below the property.
+     */
     protected void showExtraInfo() {
         if (!user.isStaff()) {
             return;
@@ -69,6 +86,9 @@ public class CampView extends View {
         }
     }
 
+    /**
+     * Displays the list of options for viewing a camp.
+     */
     protected void listOptions() {
         if (canEdit()) {
             if (currentSuggestion().isPresent()) {
@@ -108,6 +128,12 @@ public class CampView extends View {
         System.out.println("(Q)uit");
     }
 
+    /**
+     * Handles the command of the user.
+     * @param sc The scanner to read input from
+     * @param command The command that is provided by the user
+     * @return The view to change to, if applicable. Null otherwise.
+     */
     protected View handleCommand(Scanner sc, String command) {
         if (command.equalsIgnoreCase("q")) {
             return originalView;
@@ -165,26 +191,46 @@ public class CampView extends View {
         }
     }
 
+    /**
+     * Checks if the existing user can edit the camp.
+     * @return True if the user has permission to edit, false otherwise.
+     */
     private boolean canEdit() {
         return user.isStaff() || UserController.isManagedCamp(camp, user);
     }
 
+    /**
+     * Checks if the existing user can register for the camp.
+     * @return True if the user can register, false otherwise.
+     */
     private boolean canRegister() {
         Optional<CampUser> campUser = camp.findUser(user.getUserID());
         return !user.isStaff() && campUser.isEmpty();
     }
 
+    /**
+     * Checks if the existing user is an attendee.
+     * @return True if the user is an attendee, false otherwise.
+     */
     private boolean isAttendee() {
         Optional<CampUser> campUser = camp.findUser(user.getUserID());
         return campUser.isPresent() && !(campUser.get() instanceof CommitteeMember);
     }
 
+    /**
+     * Lookup the current suggestion of the user for the camp being viewed.
+     * @return The suggestion found, if available.
+     */
     private Optional<Suggestion> currentSuggestion() {
         return camp.getSuggestions().stream().
                 filter(suggestion -> suggestion.getSuggesterID().equals(user.getUserID())).
                 findFirst();
     }
 
+    /**
+     * Retrieve the information of camp to display.
+     * @return The information of camp.
+     */
     protected CampInfo getCampInfo() {
         return camp.getInfo();
     }
@@ -224,6 +270,12 @@ public class CampView extends View {
         System.out.println();
     }
 
+    /**
+     * Displays the property of the camp.
+     * @param id The ID of the property
+     * @param key The key of the property
+     * @param value The value of the property
+     */
     protected void showProperty(int id, String key, String value) {
         String displayValue = ((value == null) || value.isEmpty()) ? "Unknown" : value;
         System.out.printf("%25s %s\n", key+":", displayValue);

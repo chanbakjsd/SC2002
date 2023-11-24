@@ -9,6 +9,9 @@ import dev.wenxu.sc2002.entity.User;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * A screen for the user to view attendees at a camp.
+ */
 public class MemberView extends View {
     /**
      * The camp that is being checked.
@@ -19,11 +22,21 @@ public class MemberView extends View {
      */
     private final View originalView;
 
+    /**
+     * Create a new MemberView.
+     * @param camp The camp to show attendee for
+     * @param originalView The view to return to
+     */
     public MemberView(Camp camp, View originalView) {
         this.camp = camp;
         this.originalView = originalView;
     }
 
+    /**
+     * Display the list of committee members.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to return to.
+     */
     @Override
     public View display(Scanner sc) {
         while (true) {

@@ -11,21 +11,53 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**
+ * The screen to allow users to generate camp reports.
+ */
 public class ReportView extends View {
+    /**
+     * The pattern used to generate file names from date and time.
+     */
     private static final DateTimeFormatter FILE_NAME_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
+    /**
+     * The camp to generate report for.
+     */
     private final Camp camp;
+    /**
+     * The view to return to when the user quits.
+     */
     private final View originalView;
+    /**
+     * True if the player is allowed to generate performance report, false otherwise.
+     */
     private final boolean allowPerformance;
+    /**
+     * True if the report generated will include camp committee, false otherwise.
+     */
     private boolean campCommittee;
+    /**
+     * True if the report generated will include attendees, false otherwise.
+     */
     private boolean attendee;
 
+    /**
+     * Create a new ReportView.
+     * @param camp The camp to generate report for.
+     * @param originalView The view to return to.
+     * @param allowPerformance True if performance reports were allowed, false otherwise.
+     */
     public ReportView(Camp camp, View originalView, boolean allowPerformance) {
         this.camp = camp;
         this.originalView = originalView;
         this.allowPerformance = allowPerformance;
     }
 
+    /**
+     * Display the screen to allow users to generate reports.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to return to.
+     */
     @Override
     public View display(Scanner sc) {
         while (true) {
@@ -60,6 +92,9 @@ public class ReportView extends View {
         }
     }
 
+    /**
+     * Write a file with the description of the camp and another file containing the list of attendees.
+     */
     public void generateReport() {
         LocalDateTime nowTime = LocalDateTime.now();
         String txtFileName = nowTime.format(FILE_NAME_PATTERN) + " " + camp.getInfo().getName() + ".txt";

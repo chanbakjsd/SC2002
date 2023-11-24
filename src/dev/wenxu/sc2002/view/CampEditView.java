@@ -11,14 +11,33 @@ import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * The screen that allows users to edit a camp.
+ */
 public class CampEditView extends CampView {
+    /**
+     * The pattern for the user to input the registration time with.
+     */
     private static final DateTimeFormatter DATE_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * The suggestion that is being edited.
+     */
     private final Suggestion suggestion;
+
+    /**
+     * Creates a new camp edit view.
+     * @param camp The camp to edit
+     * @param user The user that is currently authenticated
+     * @param originalView The view to return to after exit
+     */
     public CampEditView(Camp camp, User user, View originalView) {
         super(camp, user, originalView);
         this.suggestion = camp.findSuggestion(user.getUserID()).orElse(new Suggestion(user.getUserID(), camp.getInfo()));
     }
 
+    /**
+     * Displays the list of options for editing camp.
+     */
     @Override
     protected void listOptions() {
         if (user.isStaff()) {
@@ -30,6 +49,12 @@ public class CampEditView extends CampView {
         System.out.println("(Q)uit without Saving");
     }
 
+    /**
+     * Handles the command of the user.
+     * @param sc The scanner to read input from
+     * @param command The command that is provided by the user
+     * @return The view to change to, if applicable. Null otherwise.
+     */
     @Override
     protected View handleCommand(Scanner sc, String command) {
         if (command.equalsIgnoreCase("s")) {
@@ -131,12 +156,21 @@ public class CampEditView extends CampView {
         return null;
     }
 
+    /**
+     * Displays the property of the camp.
+     * @param id The ID of the property
+     * @param key The key of the property
+     * @param value The value of the property
+     */
     @Override
     protected void showProperty(int id, String key, String value) {
         System.out.printf("(%d) ", id);
         super.showProperty(id, key, value);
     }
 
+    /**
+     * @return The info of the camp to display
+     */
     @Override
     protected CampInfo getCampInfo() {
         return suggestion;

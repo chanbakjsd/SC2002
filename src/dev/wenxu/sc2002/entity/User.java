@@ -1,5 +1,8 @@
 package dev.wenxu.sc2002.entity;
 
+/**
+ * A user that can login to the CAMS system.
+ */
 public class User {
     /**
      * The network user ID of the user, which is the part before @ in email address.

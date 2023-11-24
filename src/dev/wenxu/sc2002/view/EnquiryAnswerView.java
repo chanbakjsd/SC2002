@@ -7,6 +7,9 @@ import dev.wenxu.sc2002.entity.User;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * A screen for committee member or staff to answer enquiries.
+ */
 public class EnquiryAnswerView extends View {
     /**
      * The camp that is being enquired.
@@ -21,12 +24,23 @@ public class EnquiryAnswerView extends View {
      */
     private final View originalView;
 
+    /**
+     * Creates an EnquiryAnswerView.
+     * @param camp The camp to answer query for
+     * @param user The user answering the query
+     * @param originalView The view to return to
+     */
     public EnquiryAnswerView(Camp camp, User user, View originalView) {
         this.camp = camp;
         this.user = user;
         this.originalView = originalView;
     }
 
+    /**
+     * Display the screen to prompt for answers or allow the user to leave.
+     * @param sc The scanner that is scanning for inputs from stdin.
+     * @return The view to return to.
+     */
     @Override
     public View display(Scanner sc) {
         while (true) {
