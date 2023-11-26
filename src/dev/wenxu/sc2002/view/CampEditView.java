@@ -145,12 +145,16 @@ public class CampEditView extends CampView {
                     break;
             }
         } catch (NumberFormatException e) {
+            sc.nextLine();
             error = "Invalid option. Please try again.";
         } catch (IllegalArgumentException e) {
+            sc.nextLine();
             error = e.getMessage();
         } catch (InputMismatchException e) {
+            sc.nextLine();
             error = "Invalid value entered.";
         } catch (DateTimeParseException e) {
+            sc.nextLine();
             error = "Invalid format entered.";
         }
         return null;

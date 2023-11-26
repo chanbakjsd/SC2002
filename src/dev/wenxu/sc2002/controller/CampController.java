@@ -52,6 +52,14 @@ public class CampController {
     }
 
     /**
+     * Delete the provided camp from the list of camps.
+     * @param camp The camp to remove.
+     */
+    public void removeCamp(Camp camp) {
+        camps.remove(camp);
+    }
+
+    /**
      * Returns whether the user is an existing committee member.
      * @param userID The ID of the user to check.
      * @return True if the user is an existing committee member, false otherwise.

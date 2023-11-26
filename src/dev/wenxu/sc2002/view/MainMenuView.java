@@ -43,6 +43,7 @@ public class MainMenuView extends View {
     @Override
     public View display(Scanner sc) {
         while (true) {
+            clearScreen();
             System.out.printf("Welcome, %s!\n\n", user.getUserID());
             listCamps();
             System.out.println();
@@ -60,28 +61,32 @@ public class MainMenuView extends View {
             System.out.print("Choose your action: ");
             String command = sc.nextLine();
 
-            if (user.isStaff() && command.equalsIgnoreCase("c")) {
-                System.out.print("Enter the name of the new camp: ");
-                String name = sc.nextLine();
-                CampInfo info = new CampInfo(name, user.getUserID());
-                info.setFaculty(user.getFaculty());
-                Camp newCamp = new Camp(info);
-                CampController.getInstance().addCamp(newCamp);
-            } else if (!camps.isEmpty() && command.equalsIgnoreCase("v")) {
-                System.out.print("Enter the ID of the camp to view: ");
-                int id = sc.nextInt();
-                sc.nextLine();
-                if (id < 1 || id > camps.size()) {
-                    error = "Invalid ID provided.";
-                    continue;
+            try {
+                if (user.isStaff() && command.equalsIgnoreCase("c")) {
+                    System.out.print("Enter the name of the new camp: ");
+                    String name = sc.nextLine();
+                    CampInfo info = new CampInfo(name, user.getUserID());
+                    info.setFaculty(user.getFaculty());
+                    Camp newCamp = new Camp(info);
+                    CampController.getInstance().addCamp(newCamp);
+                } else if (!camps.isEmpty() && command.equalsIgnoreCase("v")) {
+                    System.out.print("Enter the ID of the camp to view: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    if (id < 1 || id > camps.size()) {
+                        error = "Invalid ID provided.";
+                        continue;
+                    }
+                    return new CampView(camps.get(id - 1), user, this);
+                } else if (command.equalsIgnoreCase("p")) {
+                    return new PasswordChangeView(user, false);
+                } else if (command.equalsIgnoreCase("q")) {
+                    return new LoginView();
+                } else {
+                    error = "Unknown command.";
                 }
-                return new CampView(camps.get(id-1), user, this);
-            } else if (command.equalsIgnoreCase("p")) {
-                return new PasswordChangeView(user, false);
-            } else if (command.equalsIgnoreCase("q")) {
-                return new LoginView();
-            } else {
-                error = "Unknown command.";
+            } catch (Exception ignored) {
+                sc.nextLine();
             }
         }
     }

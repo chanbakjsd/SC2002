@@ -20,9 +20,13 @@ public class CAMMain {
     public static void main(String[] args) {
         initializeUsers();
         Scanner sc = new Scanner(System.in);
-        View view = new LoginView();
-        while (view != null) {
-            view = view.display(sc);
+        while (true) {
+            try {
+                View view = new LoginView();
+                while (view != null) {
+                    view = view.display(sc);
+                }
+            } catch (Exception ignored) {}
         }
     }
 

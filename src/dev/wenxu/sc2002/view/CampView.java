@@ -1,5 +1,6 @@
 package dev.wenxu.sc2002.view;
 
+import dev.wenxu.sc2002.controller.CampController;
 import dev.wenxu.sc2002.controller.UserController;
 import dev.wenxu.sc2002.entity.*;
 
@@ -97,6 +98,9 @@ public class CampView extends View {
             } else {
                 System.out.println("(E)dit Camp");
             }
+            if (user.isStaff()) {
+                System.out.println("(D)elete Camp");
+            }
             System.out.println("View (A)ttendee List");
         }
         if (user.isStaff()) System.out.println("Change (V)isibility");
@@ -144,6 +148,10 @@ public class CampView extends View {
         if (command.equalsIgnoreCase("d") && currentSuggestion().isPresent()) {
             camp.deleteSuggestion(currentSuggestion().get());
             return null;
+        }
+        if (command.equalsIgnoreCase("d") && user.isStaff()) {
+            CampController.getInstance().removeCamp(camp);
+            return new MainMenuView(user);
         }
         if (command.equalsIgnoreCase("v") && user.isStaff()) {
             camp.setVisible(!camp.isVisible());
